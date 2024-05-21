@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<style type="text/css">
+    .content {
+        max-width: 1000px;
+        margin: auto;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titleTrain}"></title>
+</head>
+<body>
+<div class="content">
+
+    <h1 th:text="${titleTrain}"></h1>
+    <p style="color: red"><span th:text="${errorString}"></span></p>
+
+    <form th:action="@{/trains/save/{id} (id=${train.id})}" th:object="${train}" method="POST">
+        <input required hidden type="text" name="id" th:field="*{id}"/>
+        <p>
+            <label for="number_train"> Номер потягу </label></p>
+        <p>
+            <input type="text" name="number_train" id="number_train" th:field="*{number}"
+                   pattern="^[A-Z]{2,3}\d{3}$"
+                   title="KV000"
+                   required/>
+        </p>
+        <p>
+            <label for="pointVid"> Назва вокзала з якого відправляється потяг </label></p>
+        <p>
+            <input type="text" name="pointVid" id="pointVid" th:field="*{pointVid}"
+                   pattern="^[а-щА-ЩґҐєЄіІїЇґҐєЄіІїЇ-]+$"
+                   required/>
+        </p>
+        <p>
+            <label for="pointDo"> Назва вокзала до якого прибуває потяг</label></p>
+        <p>
+            <input type="text" name="pointDo" id="pointDo" th:field="*{pointDo}"
+                   pattern="^[а-щА-ЩґҐєЄіІїЇґҐєЄіІїЇ-]+$"
+                   required/>
+        </p>
+        <p>
+            <label for="variant"> Мова програмування </label></p>
+        <p>
+            <select id="variant" name="variant" th:field="*{variantRuhu}" required>
+                <option th:each="vr : ${T(ntukhpi.ddy.webjavaddylab3.enums.variantRuhu).values()}"
+                        th:value="${vr}" th:text="${vr.getDisplayName()}" th:selected="${variantRuhu==vr}"></option>
+            </select>
+        </p>
+        <p>
+            <label for="timeToGo"> Час відправлення</label>
+        </p>
+        <p>
+            <input type="text" name="timeToGo" id="timeToGo" th:field="*{timeToGo}" required pattern="^(?:[01]\d|2[0-3]):[0-5]\d$">
+        </p>
+        <p>
+            <label for="durations"> Час відправлення у дорозі</label>
+        </p>
+        <p>
+            <input type="text" name="durations" id="durations" th:field="*{duration}" required pattern="^(?:[01]\d|2[0-3]):[0-5]\d$">
+        </p>
+        <p>
+        <p>
+            <button type="submit"> Зберігти</button>
+            <a href="/trains">Відміна</a>
+        </p>
+    </form>
+
+</div>
+</body>
+</html>

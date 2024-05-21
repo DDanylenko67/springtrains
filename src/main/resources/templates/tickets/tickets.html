@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Квитки</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/logout}">Вийти з системи</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+<h1>Перелік квитків на потяг</h1>
+<br>
+<table style="border: #000000">
+    <tr>
+        <td style="border: #000000">
+            <p>
+                <button onclick="sortTableByIndex(3)"> Сортування за ім'ям власників
+                </button>
+            </p>
+        </td>
+        <td style="border: #000000">
+            <b><label for="search-text"> Пошук за ім'ям власників </label></b>
+            <input type="text"
+                   placeholder="Введіть ім'я" id="search-text"
+                   onkeyup="tableSearch()">
+        </td>
+        <td style="border: #000000">
+            <form th:action="@{/trains/tickets/{id} (id=${tickets.get(0).getTrain().getId()})}"  method="get">
+                <button type="submit" accesskey="x">Скинути</button>
+            </form>
+        </td>
+        <td style="border: #000000">
+            <form action="/trains" method="get">
+                <button type="submit" accesskey="x">На головну</button>
+            </form>
+        </td>
+    </tr>
+</table>
+<br>
+<table id="tickets-table" class="table">
+    <tr>
+        <th>Номер потягу</th>
+        <th>Дата відправки</th>
+        <th>Час відправки</th>
+        <th>Власник</th>
+        <th>Номер пасспорту</th>
+        <th>Вагон</th>
+        <th>Місце</th>
+        <th colspan="2">Операції</th>
+    </tr>
+    <tr th:each="ticket: ${tickets}">
+        <td th:text="${ticket.getTrain().getNumber()}"></td>
+        <td th:text="${ticket.getTimeToGo() }"></td>
+        <td th:text="${ticket.getTrain().getTimeToGo()}"></td>
+        <td th:text="${ticket.getOwner()}"></td>
+        <td th:text="${ticket.getPassport()}"></td>
+        <td th:text="${ticket.getVagon()}"></td>
+        <td th:text="${ticket.getMesto()}"></td>
+        <td>
+            <form th:action="@{/trains/tickets/edit/{id} (id=${ticket.id})}" >
+                <button type="submit">  Редагувати  </button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/trains/ticket/del/{id} (id=${ticket.id})}" >
+                <button type="submit" onclick="return confirmation()">   Вилучити   </button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+<script type="text/javascript">
+    function confirmation() {
+        return confirm('Ви впевнені, що хочете вилучити дані?');
+    }
+
+    function tableSearch() {
+        var phrase = document.getElementById('search-text');
+        var table = document.getElementById('tickets-table');
+        var regPhrase = new RegExp(phrase.value, 'i');
+        var flag = false;
+        for (var i = 1; i < table.rows.length; i++) {
+            flag = regPhrase.test(table.rows[i].cells[3].innerHTML);
+            if (flag) {
+                table.rows[i].style.display = "";
+            } else {
+                table.rows[i].style.display = "none";
+            }
+        }
+    }
+    function sortTableByIndex(col_index) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("tickets-table");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[col_index];
+                y = rows[i + 1].getElementsByTagName("TD")[col_index];
+
+                // Use localeCompare for case-insensitive string comparison
+                var compareResult = x.innerHTML.localeCompare(y.innerHTML, 'uk-UA', { sensitivity: 'base' });
+
+                if (compareResult > 0) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+</html>

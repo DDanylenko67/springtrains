@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<style type="text/css">
+    .content {
+        max-width: 1000px;
+        margin: auto;
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titleTicket}"></title>
+</head>
+<body>
+<div class="content">
+
+    <h1 th:text="${titleTicket}"></h1>
+    <p style="color: red"><span th:text="${errorString}"></span></p>
+    <form th:action="@{/tickets/save/{id} (id=${ticket.id})}" th:object="${ticket}" method="POST">
+        <input type="hidden" name="trainId" th:value="${ticket.train.id}" />
+        <p>
+            <label for="owner_ticket">Призвище пасажира</label>
+        </p>
+        <p>
+            <input type="text" name="owner_ticket" id="owner_ticket" th:field="*{owner}"
+                   pattern="^([A-Z][a-z]+ [A-Z][a-z]+|[А-ЯЄІЇ][а-яієї]+ [А-ЯЄІЇ][а-яієї]+)$"
+                   required/>
+        </p>
+        <p><label for="passport">Введіть паспорт</label></p>
+        <p>
+            <input type="text" name="passport" id="passport" th:field="*{passport}"
+                   pattern="^([A-Z]{2}\d{6})|(\d{9})$"
+                   required/>
+        </p>
+        <p>
+            <label for="ticketVagon">Виберіть вагон</label></p>
+        <p>
+            <input type="text" name="ticketVagon" id="ticketVagon" th:field="*{vagon}"
+                   pattern="^[1-9]$" title="Від 1 до 9"
+                   required/>
+        </p>
+        <p>
+            <label for="ticketMesto"> Виберіть місце</label></p>
+        <p>
+            <input type="text" name="ticketMesto" id="ticketMesto" th:field="*{mesto}"
+                   pattern="^(?:[1-9]|[1-4][0-9]|5[0-4])$" title="Від 1 до 54"
+                   required/>
+        </p>
+        <p>
+            <label for="timeToGos"> Дата відправлення</label>
+        </p>
+        <input type="date" name="timeToGos" id="timeToGos" th:field="*{timeToGo}"
+              th:min="${minDate}" th:max="${maxDate}" required/>
+        <p>
+            <button type="submit"> Зберігти</button>
+            <a href="/trains">Відміна</a>
+        </p>
+    </form>
+
+</div>
+</body>
+</html>
